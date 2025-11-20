@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard Opérateurs – Certifications</title>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- XLSX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+  body { font-family: Arial, sans-serif; background:#f4f6fa; margin:0; padding:20px; }
+  h1 { text-align:center; margin-bottom:20px; }
+  .container { max-width:1200px; margin:auto; }
+
+  input[type="file"] { margin:10px 0 15px; }
+
+  /* Barre de chargement */
+  #loadingBarWrapper {
+    width:100%; background:#ddd; border-radius:20px; height:14px;
+    margin:15px 0; display:none; overflow:hidden;
+  }
+  #loadingBar {
+    height:100%; width:0; background:#4a90e2;
+    border-radius:20px; transition:width .4s;
+  }
+
+  /* Filtres */
+  .filters {
+    margin:10px 0 20px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  /* KPI */
+  .kpi-wrapper { display:flex; gap:20px; flex-wrap:wrap; margin:25px 0; }
+  .kpi {
+    flex:1; min-width:200px; background:white; padding:20px;
+    border-radius:12px; text-align:center;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  }
+  .kpi-value { font-size:32px; font-weight:bold; }
+  .kpi-label { font-size:14px; color:#666; }
+
+  /* Graph */
+  #chartContainer {
+    background:white; padding:20px; border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:30px;
+  }
+
+  /* Tableau */
+  table {
+    width:100%; border-collapse:collapse; background:white;
+    border-radius:12px; overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  }
+  th, td { padding:10px 12px; border-bottom:1px solid #eee; font-size:13px; }
+  th { background:#fafafa; cursor:pointer; }
+  th:hover { background:#ececec; }
+
+  .cell-content { display:flex; align-items:center; gap:6px; }
+  .dot { width:12px; height:12px; border-radius:50%; display:inline-block; }
+  .valid { background:#2ecc71; }
+  .expired { background:#e74c3c; }
+  .none { background:#bdc3c7; }
+
+  .cert-org {
+    font-size:11px; padding:2px 6px; border-radius:4px;
+    max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .cert-org.valid { background:#e8f8f0; color:#1e8449; }
+  .cert-org.expired { background:#fdecea; color:#c0392b; }
+  .cert-org.none { background:#ecf0f1; color:#7f8c8d; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Dashboard des opérateurs – Certifications</h1>
+
+  <input type="file" id="excelFile" accept=".xlsx" />
+
+  <div class="filters">
+    <label for="filterExpiry"><b>Filtrer par expiration :</b></label>
+    <select id="filterExpiry">
+      <option value="0">Tous les opérateurs</option>
+      <option value="1">Expiration dans 1 mois</option>
+      <option value="3">Expiration dans 3 mois</option>
+      <option value="6">Expiration dans 6 mois</option>
+      <option value="12">Expiration dans 12 mois</option>
+    </select>
+
+    <label for="graphMode"><b>Graphique :</b></label>
+    <select id="graphMode">
+      <option value="domain">Par domaine</option>
+      <option value="cert">Par certificateur</option>
+    </select>
+
+    <span style="font-size:11px;color:#666;">
+      (Le filtre s'applique uniquement au tableau, le graphique reste global)
+    </span>
+  </div>
+
+  <div id="loadingBarWrapper"><div id="loadingBar"></div></div>
+
+  <!-- KPI -->
+  <div class="kpi-wrapper">
+    <div class="kpi">
+      <div id="kpiTotal" class="kpi-value">–</div>
+      <div class="kpi-label">Total opérateurs</div>
+    </div>
+    <div class="kpi">
+      <div id="kpiExpired" class="kpi-value">–</div>
+      <div class="kpi-label">Avec au moins une certif expirée</div>
+    </div>
+    <div class="kpi">
+      <div id="kpiFull" class="kpi-value">–</div>
+      <div class="kpi-label">Socle complet (Amiante, CREP, Termites, DPE, Gaz, Élec)</div>
+    </div>
+  </div>
+
+  <div id="chartContainer">
+    <canvas id="chart"></canvas>
+  </div>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Opérateur</th>
+        <th data-domain="amiante">Amiante</th>
+        <th data-domain="crep">CREP</th>
+        <th data-domain="term">Termites</th>
+        <th data-domain="dpem">DPE Mention</th>
+        <th data-domain="gaz">Gaz</th>
+        <th data-domain="elec">Élec</th>
+        <th data-domain="dpei">DPE Indiv</th>
+        <th data-domain="audit">Audit</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+</div>
+
+<script>
+/* ==========
+   Utilitaires dates
+   ========== */
+
+function parseExcelDate(v) {
+  if (!v) return null;
+
+  if (v instanceof Date) return v;
+
+  if (typeof v === "number") {
+    const d = XLSX.SSF.parse_date_code(v);
+    if (!d) return null;
+    return new Date(d.y, d.m - 1, d.d);
+  }
+
+  if (typeof v === "string") {
+    const parts = v.split("/");
+    if (parts.length === 3) {
+      const [dd, mm, yyyy] = parts.map(n => parseInt(n));
+      if (!isNaN(dd) && !isNaN(mm) && !isNaN(yyyy)) {
+        return new Date(yyyy, mm - 1, dd);
+      }
+    }
+  }
+  return null;
+}
+
+function isValidDate(dateFin) {
+  const d = parseExcelDate(dateFin);
+  if (!d) return false;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  d.setHours(0,0,0,0);
+  return d >= today;
+}
+
+/* ==========
+   Config colonnes / domaines
+   ========== */
+
+const COL = {
+  NAME:1,
+
+  AMI_CERT:10, AMI_NUM:11, AMI_DEB:12, AMI_FIN:13,
+  CREP_CERT:15, CREP_NUM:16, CREP_DEB:17, CREP_FIN:18,
+  TERM_CERT:20, TERM_NUM:21, TERM_DEB:22, TERM_FIN:23,
+  DPEM_CERT:25, DPEM_NUM:26, DPEM_DEB:27, DPEM_FIN:28,
+  GAZ_CERT:30, GAZ_NUM:31, GAZ_DEB:32, GAZ_FIN:33,
+  ELEC_CERT:35, ELEC_NUM:36, ELEC_DEB:37, ELEC_FIN:38,
+  DPEI_CERT:42, DPEI_NUM:43, DPEI_DEB:44, DPEI_FIN:45,
+  AUDIT:48
+};
+
+const DOMAINS = [
+  {label:"Amiante",     key:"amiante", isCore:true,
+    cert:COL.AMI_CERT,  num:COL.AMI_NUM,  deb:COL.AMI_DEB,  fin:COL.AMI_FIN},
+  {label:"CREP",        key:"crep",    isCore:true,
+    cert:COL.CREP_CERT, num:COL.CREP_NUM, deb:COL.CREP_DEB, fin:COL.CREP_FIN},
+  {label:"Termites",    key:"term",    isCore:true,
+    cert:COL.TERM_CERT, num:COL.TERM_NUM, deb:COL.TERM_DEB, fin:COL.TERM_FIN},
+  {label:"DPE Mention", key:"dpem",    isCore:true,
+    cert:COL.DPEM_CERT, num:COL.DPEM_NUM, deb:COL.DPEM_DEB, fin:COL.DPEM_FIN},
+  {label:"Gaz",         key:"gaz",     isCore:true,
+    cert:COL.GAZ_CERT,  num:COL.GAZ_NUM,  deb:COL.GAZ_DEB,  fin:COL.GAZ_FIN},
+  {label:"Élec",        key:"elec",    isCore:true,
+    cert:COL.ELEC_CERT, num:COL.ELEC_NUM, deb:COL.ELEC_DEB, fin:COL.ELEC_FIN},
+  {label:"DPE Indiv",   key:"dpei",    isCore:false,
+    cert:COL.DPEI_CERT, num:COL.DPEI_NUM, deb:COL.DPEI_DEB, fin:COL.DPEI_FIN},
+  {label:"Audit",       key:"audit",   isCore:false,
+    audit:COL.AUDIT}
+];
+
+/* ==========
+   Références DOM et variables globales
+   ========== */
+
+const fileInput = document.getElementById("excelFile");
+const filterSelect = document.getElementById("filterExpiry");
+const graphModeSelect = document.getElementById("graphMode");
+const loadingBarWrapper = document.getElementById("loadingBarWrapper");
+const loadingBar = document.getElementById("loadingBar");
+const tbody = document.querySelector("#dataTable tbody");
+const kpiTotal = document.getElementById("kpiTotal");
+const kpiExpired = document.getElementById("kpiExpired");
+const kpiFull = document.getElementById("kpiFull");
+const chartCanvas = document.getElementById("chart");
+
+let chartInstance = null;
+let ALL_OPERATORS = [];      // { name, domains:{ key:{status,org,num,deb,fin} } }
+let currentStatsGlobal = null; // stats par domaine pour tout le fichier
+
+/* ==========
+   Chargement fichier
+   ========== */
+
+fileInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  showLoading();
+
+  const reader = new FileReader();
+  reader.onload = evt => {
+    const wb = XLSX.read(evt.target.result, {type:"binary", cellDates:true});
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
+    processRows(rows);
+    hideLoading();
+  };
+  reader.readAsBinaryString(file);
+});
+
+/* ==========
+   Barre de chargement
+   ========== */
+
+function showLoading(){
+  loadingBarWrapper.style.display = "block";
+  loadingBar.style.width = "0%";
+  setTimeout(()=>loadingBar.style.width="60%",100);
+}
+function hideLoading(){
+  loadingBar.style.width = "100%";
+  setTimeout(()=>loadingBarWrapper.style.display="none",500);
+}
+
+/* ==========
+   Traitement des lignes et calcul des stats globales
+   ========== */
+
+function processRows(rows){
+  ALL_OPERATORS = [];
+  tbody.innerHTML = "";
+
+  let totalOps = 0;
+  let expiredOps = 0;
+  let fullCoreOps = 0;
+
+  const stats = {};
+  DOMAINS.forEach(d => stats[d.label] = {valid:0, expired:0, none:0});
+
+  rows.slice(1).forEach(row => {
+    const name = (row[COL.NAME] || "").toString().trim();
+    if (!name) return;
+
+    totalOps++;
+
+    let opExpired = false;
+    let opFullCore = true;
+
+    const op = {
+      name,
+      row,
+      domains: {}
+    };
+
+    DOMAINS.forEach(domain => {
+      let status = "none";
+      let org = "—";
+      let num = "—";
+      let deb = null;
+      let fin = null;
+
+      if (domain.audit != null) {
+        const flag = row[domain.audit];
+        if (flag) {
+          status = "valid";
+          org = flag.toString().trim() || "OK";
+          stats[domain.label].valid++;
+        } else {
+          status = "none";
+          stats[domain.label].none++;
+        }
+      } else {
+        org = (row[domain.cert] || "").toString().trim() || "—";
+        num = (row[domain.num] || "").toString().trim() || "—";
+        deb = parseExcelDate(row[domain.deb]);
+        fin = parseExcelDate(row[domain.fin]);
+
+        const hasData = (org !== "—" || num !== "—" || deb || fin);
+
+        if (!hasData) {
+          status = "none";
+          stats[domain.label].none++;
+          if (domain.isCore) opFullCore = false;
+        } else if (fin && !isValidDate(fin)) {
+          status = "expired";
+          stats[domain.label].expired++;
+          opExpired = true;
+          if (domain.isCore) opFullCore = false;
+        } else {
+          status = "valid";
+          stats[domain.label].valid++;
+        }
+      }
+
+      op.domains[domain.key] = {status, org, num, deb, fin};
+    });
+
+    if (opExpired) expiredOps++;
+    if (opFullCore) fullCoreOps++;
+
+    ALL_OPERATORS.push(op);
+  });
+
+  // KPI et stats globales
+  kpiTotal.textContent = totalOps;
+  kpiExpired.textContent = expiredOps;
+  kpiFull.textContent = fullCoreOps;
+
+  currentStatsGlobal = stats;
+  drawChart();           // Graph en fonction du mode sélectionné
+  renderTable(ALL_OPERATORS); // Tableau complet
+}
+
+/* ==========
+   Rendu du tableau à partir d'une liste d'opérateurs
+   ========== */
+
+function renderTable(operators){
+  tbody.innerHTML = "";
+
+  operators.forEach(op => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${op.name}</td>`;
+
+    DOMAINS.forEach(domain => {
+      const d = op.domains[domain.key] || {
+        status:"none", org:"—", num:"—", deb:null, fin:null
+      };
+
+      const dDeb = d.deb ? d.deb.toLocaleDateString() : "—";
+      const dFin = d.fin ? d.fin.toLocaleDateString() : "—";
+
+      let tooltip = `${domain.label}
+Certificateur : ${d.org}
+Numéro : ${d.num}
+Début : ${dDeb}
+Fin : ${dFin}`;
+
+      if (domain.key === "audit") {
+        tooltip = (d.status === "valid")
+          ? "Audit : Certifié (AW rempli)"
+          : "Audit : Non certifié";
+      }
+
+      const td = document.createElement("td");
+      td.innerHTML = `
+        <div class="cell-content">
+          <span class="dot ${d.status}" title="${tooltip}"></span>
+          <span class="cert-org ${d.status}" title="${tooltip}">${d.org}</span>
+        </div>
+      `;
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+/* ==========
+   Stats par certificateur
+   ========== */
+
+function computeStatsByCertificateur(){
+  const stats = {};  // { "AFNOR": {valid,expired,none}, ... }
+
+  ALL_OPERATORS.forEach(op => {
+    DOMAINS.forEach(domain => {
+      const d = op.domains[domain.key];
+      if (!d) return;
+      const org = d.org;
+      if (!org || org === "—") return;
+
+      if (!stats[org]) {
+        stats[org] = {valid:0, expired:0, none:0};
+      }
+      stats[org][d.status]++;
+    });
+  });
+
+  return stats;
+}
+
+/* ==========
+   Graph global : par domaine / par certificateur
+   ========== */
+
+function drawChart(){
+  if (!currentStatsGlobal) return;
+
+  const mode = graphModeSelect.value;
+
+  if (chartInstance) chartInstance.destroy();
+
+  let labels = [];
+  let validData = [];
+  let expiredData = [];
+  let noneData = [];
+
+  if (mode === "domain") {
+    labels = DOMAINS.map(d => d.label);
+    validData   = labels.map(l => currentStatsGlobal[l].valid);
+    expiredData = labels.map(l => currentStatsGlobal[l].expired);
+    noneData    = labels.map(l => currentStatsGlobal[l].none);
+  } else if (mode === "cert") {
+    const certStats = computeStatsByCertificateur();
+    labels = Object.keys(certStats).sort((a,b)=>a.localeCompare(b));
+    validData   = labels.map(c => certStats[c].valid);
+    expiredData = labels.map(c => certStats[c].expired);
+    noneData    = labels.map(c => certStats[c].none);
+  }
+
+  chartInstance = new Chart(chartCanvas.getContext("2d"), {
+    type:"bar",
+    data:{
+      labels,
+      datasets:[
+        {label:"Valide", data:validData, backgroundColor:"#2ecc71"},
+        {label:"Expirée", data:expiredData, backgroundColor:"#e74c3c"},
+        {label:"Aucune", data:noneData, backgroundColor:"#bdc3c7"}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{ legend:{ position:"bottom" } },
+      scales:{ x:{ stacked:true }, y:{ stacked:true } }
+    }
+  });
+}
+
+/* ==========
+   Filtre expiration (tableau uniquement)
+   ========== */
+
+filterSelect.addEventListener("change", () => {
+  const months = parseInt(filterSelect.value, 10);
+  if (!ALL_OPERATORS.length) return;
+
+  if (months === 0) {
+    renderTable(ALL_OPERATORS);
+    return;
+  }
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const target = new Date(today.getTime());
+  target.setMonth(target.getMonth() + months);
+
+  const filtered = ALL_OPERATORS.filter(op => {
+    return Object.values(op.domains).some(d => {
+      if (!d.fin) return false;
+      const fin = d.fin;
+      return fin >= today && fin <= target;
+    });
+  });
+
+  renderTable(filtered);
+});
+
+/* ==========
+   Changement de mode du graphique
+   ========== */
+
+graphModeSelect.addEventListener("change", () => {
+  if (!currentStatsGlobal) return;
+  drawChart();
+});
+
+/* ==========
+   Tri par domaine (clic sur l'en-tête)
+   ========== */
+
+const sortOrder = { expired:0, valid:1, none:2 };
+
+function sortByDomain(domainKey){
+  const domainIndex = DOMAINS.findIndex(d => d.key === domainKey);
+  if (domainIndex < 0) return;
+
+  const tdIndex = domainIndex + 1; // +1 car col 0 = nom
+
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+
+  rows.sort((a,b) => {
+    const aDot = a.children[tdIndex].querySelector(".dot");
+    const bDot = b.children[tdIndex].querySelector(".dot");
+
+    const aStatus = aDot ? aDot.classList[1] : "none";
+    const bStatus = bDot ? bDot.classList[1] : "none";
+
+    if (sortOrder[aStatus] !== sortOrder[bStatus]) {
+      return sortOrder[aStatus] - sortOrder[bStatus];
+    }
+
+    const nameA = a.children[0].innerText.toLowerCase();
+    const nameB = b.children[0].innerText.toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
+  tbody.innerHTML = "";
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+document.querySelectorAll("th[data-domain]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.getAttribute("data-domain");
+    sortByDomain(key);
+  });
+});
+</script>
+
+</body>
+</html>
