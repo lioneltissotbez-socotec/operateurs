@@ -17,6 +17,29 @@
 
   input[type="file"] { margin:10px 0 15px; }
 
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.header-logo {
+  height: 48px;               /* Taille propre du logo */
+  width: auto;
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    text-align: center;
+  }
+  .header-logo {
+    height: 40px;
+  }
+}
+
+  
   /* Barre de chargement */
   #loadingBarWrapper {
     width:100%; background:#ddd; border-radius:20px; height:14px;
@@ -80,7 +103,12 @@
 <body>
 <div class="container">
 
+  <div class="header">
+  <img src="https://raw.githubusercontent.com/lioneltissotbez-socotec/socotec-assets/8b85d1f9144eefe32a8ddca9516b8d8583d7bbbd/logo.svg" 
+       alt="Logo SOCOTEC" class="header-logo">
   <h1>Dashboard des opérateurs – Certifications</h1>
+</div>
+
 
   <input type="file" id="excelFile" accept=".xlsx" />
 
