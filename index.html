@@ -147,20 +147,44 @@
   }
 
   /* KPI */
-  .kpi-wrapper { display:flex; gap:20px; flex-wrap:wrap; margin:15px 0 25px; }
-  .kpi {
-    flex:1; min-width:200px; background:white; padding:20px;
-    border-radius:12px; text-align:center;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
-  }
-  .kpi-value { font-size:32px; font-weight:bold; }
-  .kpi-label { font-size:14px; color:#666; }
+  .kpi-card {
+  background:white;
+  padding:22px 26px;
+  border-radius:14px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.08);
+  margin-bottom:25px;
+  border-left:5px solid #0078d4;
+}
+
+.kpi-section-title {
+  font-weight:600;
+  font-size:14px;
+  color:#005fa3;
+  text-transform:uppercase;
+  letter-spacing:0.4px;
+  margin-bottom:4px;
+}
+
+.kpi-row {
+  display:flex;
+  gap:30px;
+  flex-wrap:wrap;
+  font-size:14px;
+  padding-left:4px;
+}
+
+.kpi-row span b {
+  color:#222;
+}
+
 
   /* Graph */
   #chartContainer {
-    background:white; padding:20px; border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:30px;
-  }
+  background:white; padding:20px; border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:30px;
+  display:none; /* 👈 masqué par défaut */
+}
+
 
   /* Tableau */
   table {
@@ -190,6 +214,74 @@
   .cert-org.valid { background:#e8f8f0; color:#1e8449; }
   .cert-org.expired { background:#fdecea; color:#c0392b; }
   .cert-org.none { background:#ecf0f1; color:#7f8c8d; }
+
+.kpi-card {
+  background:white;
+  padding:18px 22px;
+  border-radius:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom:25px;
+}
+
+.kpi-section-title {
+  font-weight:bold;
+  font-size:15px;
+  color:#005fa3;
+  margin-bottom:6px;
+}
+
+.kpi-row {
+  display:flex;
+  gap:25px;
+  flex-wrap:wrap;
+  font-size:14px;
+}
+
+/* --- KPI sur une seule ligne --- */
+.kpi-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 20px 0 30px;
+}
+
+.kpi-card {
+  flex: 1;
+  background: white;
+  padding: 20px 22px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-left: 5px solid #0078d4;
+  min-width: 280px;
+}
+
+.kpi-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #005fa3;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.kpi-line {
+  font-size: 15px;
+  margin: 6px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.kpi-value {
+  font-weight: bold;
+  color: #222;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .kpi-container {
+    flex-direction: column;
+  }
+}
+
 
   /* Modal export visuel */
   #exportModal {
@@ -226,6 +318,27 @@
 #exportModal button:hover {
   background:#005fa3;
 }
+/* Recherche opérateur */
+#searchOperator {
+  padding: 7px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+}
+
+#searchOperatorSelect {
+  padding: 7px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+#toggleChart {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
 
 </style>
 </head>
@@ -245,8 +358,8 @@
 
 
   <!-- Filtres modernisés -->
-  <div class="filters-card filters">
-    <div class="filters-row">
+ <div class="filters-card filters">
+  <div class="filters-row">
 
       <div class="filter-group">
         <label for="filterExpiry">Expiration</label>
@@ -266,6 +379,16 @@
         </select>
       </div>
 
+      <!-- 🔍 NOUVEAU : recherche opérateur -->
+      <div class="filter-group">
+        <label for="searchOperator">Opérateur</label>
+        <input type="text" id="searchOperator" placeholder="Nom ou prénom…" />
+        <select id="searchOperatorSelect">
+          <option value="ALL">Tous</option>
+        </select>
+      </div>
+      <!-- fin nouveau bloc -->
+
       <div class="filter-group">
         <label for="graphMode">Graphique</label>
         <select id="graphMode">
@@ -274,31 +397,53 @@
         </select>
       </div>
 
+<div class="filter-group" style="margin-top:22px;">
+  <label style="font-weight:normal; display:flex; align-items:center; gap:6px;">
+    <input type="checkbox" id="toggleChart" />
+    Afficher le graphique
+  </label>
+</div>
+
+
       <div class="filter-group">
         <label style="opacity:0;">.</label>
         <button id="exportVisualBtn">Exporter visuel</button>
       </div>
 
-    </div>
   </div>
+</div>
+
 
   <div id="loadingBarWrapper"><div id="loadingBar"></div></div>
 
   <!-- KPI -->
-  <div class="kpi-wrapper">
-    <div class="kpi">
-      <div id="kpiTotal" class="kpi-value">–</div>
-      <div class="kpi-label">Total opérateurs</div>
-    </div>
-    <div class="kpi">
-      <div id="kpiExpired" class="kpi-value">–</div>
-      <div class="kpi-label">Avec au moins une certif expirée</div>
-    </div>
-    <div class="kpi">
-      <div id="kpiFull" class="kpi-value">–</div>
-      <div class="kpi-label">Socle complet (Amiante, CREP, Termites, DPE, Gaz, Élec)</div>
-    </div>
+  <div class="kpi-container">
+
+  <!-- Bloc 1 : Opérateurs -->
+  <div class="kpi-card">
+    <div class="kpi-title">Opérateurs</div>
+    <div class="kpi-line">Globaux <span class="kpi-value" id="kpiTotal">–</span></div>
+    <div class="kpi-line">Filtrés <span class="kpi-value" id="kpiFilteredTotal">–</span></div>
   </div>
+
+  <!-- Bloc 2 : Expirés -->
+  <div class="kpi-card">
+    <div class="kpi-title">Expirés</div>
+    <div class="kpi-line">Globaux <span class="kpi-value" id="kpiExpired">–</span></div>
+    <div class="kpi-line">Filtrés <span class="kpi-value" id="kpiFilteredExpired">–</span></div>
+  </div>
+
+  <!-- Bloc 3 : Socle complet -->
+  <div class="kpi-card">
+    <div class="kpi-title">Socle complet</div>
+    <div class="kpi-line">Globaux <span class="kpi-value" id="kpiFull">–</span></div>
+    <div class="kpi-line">Filtrés <span class="kpi-value" id="kpiFilteredFull">–</span></div>
+  </div>
+
+</div>
+
+
+
 
   <div id="chartContainer">
     <canvas id="chart"></canvas>
@@ -435,6 +580,9 @@ const exportModal = document.getElementById("exportModal");
 const exportTableContainer = document.getElementById("exportTableContainer");
 const copyExportBtn = document.getElementById("copyExportBtn");
 const closeExportBtn = document.getElementById("closeExportBtn");
+const searchOperatorInput = document.getElementById("searchOperator");
+const searchOperatorSelect = document.getElementById("searchOperatorSelect");
+
 
 let chartInstance = null;
 let ALL_OPERATORS = [];      // { name, domains:{ key:{status,org,num,deb,fin} } }
@@ -498,7 +646,11 @@ function processRows(rows){
   const certSet = new Set();
 
   rows.slice(1).forEach(row => {
-    const name = (row[COL.NAME] || "").toString().trim();
+    const name = (row[COL.NAME] || "")
+    .toString()
+    .trim()
+    .replace(/\s+/g, " ");    // normalise espaces
+
     if (!name) return;
 
     totalOps++;
@@ -570,11 +722,32 @@ function processRows(rows){
   kpiExpired.textContent = expiredOps;
   kpiFull.textContent = fullCoreOps;
 
-  currentStatsGlobal = stats;
-  populateCertFilter(certSet);
-  drawChart();           // Graph en fonction du mode sélectionné
-  applyFilters();        // applique filtres (expiration + cert) sur le tableau
+currentStatsGlobal = stats;
+
+populateCertFilter(certSet);
+
+// 🟦 Correction : peupler la liste des opérateurs APRÈS tout le traitement
+populateOperatorSearch(ALL_OPERATORS);
+console.log("Operators loaded:", ALL_OPERATORS.length);
+
+drawChart();
+applyFilters();
+      // applique filtres (expiration + cert + opérateur) sur le tableau
 }
+function populateOperatorSearch(ops) {
+  const select = searchOperatorSelect;
+  select.innerHTML = '<option value="ALL">Tous</option>';
+
+  const sortedNames = ops.map(o => o.name).sort((a, b) => a.localeCompare(b));
+
+  sortedNames.forEach(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    select.appendChild(option);
+  });
+}
+
 
 /* ==========
    Construction du filtre certificateur
@@ -732,10 +905,16 @@ function applyFilters(){
 
   const months = parseInt(filterSelect.value, 10);
   const certVal = filterCertSelect.value;
+  const searchText = searchOperatorInput.value.trim().toLowerCase();
 
   let ops = ALL_OPERATORS.slice();
 
-  // Filtre expiration
+  // 1) Filtre par nom d'opérateur (champ texte ou sélection)
+  if (searchText !== "") {
+    ops = ops.filter(op => op.name.toLowerCase().includes(searchText));
+  }
+
+  // 2) Filtre expiration
   if (months > 0) {
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -751,15 +930,30 @@ function applyFilters(){
     });
   }
 
-  // Filtre certificateur
+  // 3) Filtre certificateur
   if (certVal !== "ALL") {
     ops = ops.filter(op => {
       return Object.values(op.domains).some(d => d.org === certVal);
     });
   }
+// KPI filtrés
+document.getElementById("kpiFilteredTotal").textContent = ops.length;
+
+const expiredFiltered = ops.filter(op =>
+  Object.values(op.domains).some(d => d.status === "expired")
+).length;
+
+document.getElementById("kpiFilteredExpired").textContent = expiredFiltered;
+
+const fullFiltered = ops.filter(op =>
+  DOMAINS.filter(d => d.isCore).every(d => op.domains[d.key].status === "valid")
+).length;
+
+document.getElementById("kpiFilteredFull").textContent = fullFiltered;
 
   renderTable(ops);
 }
+
 
 /* ==========
    Export visuel (1 ligne par opérateur)
@@ -871,10 +1065,40 @@ graphModeSelect.addEventListener("change", () => {
   drawChart();
 });
 
+// Affichage / masquage du graphique
+document.getElementById("toggleChart").addEventListener("change", (e) => {
+  const chartContainer = document.getElementById("chartContainer");
+
+  if (e.target.checked) {
+    chartContainer.style.display = "block";
+    if (currentStatsGlobal) drawChart(); // redessine au besoin
+  } else {
+    chartContainer.style.display = "none";
+  }
+});
+
+
 exportVisualBtn.addEventListener("click", openExportVisual);
 copyExportBtn.addEventListener("click", copyExportTable);
 closeExportBtn.addEventListener("click", () => {
   exportModal.style.display = "none";
+});
+// Recherche opérateur (saisie texte)
+searchOperatorInput.addEventListener("input", (e) => {
+  // quand on tape à la main, on remet le select sur "Tous"
+  searchOperatorSelect.value = "ALL";
+  applyFilters();
+});
+
+// Recherche opérateur (sélecteur)
+searchOperatorSelect.addEventListener("change", (e) => {
+  const val = e.target.value;
+  if (val === "ALL") {
+    searchOperatorInput.value = "";
+  } else {
+    searchOperatorInput.value = val;
+  }
+  applyFilters();
 });
 
 /* ==========
