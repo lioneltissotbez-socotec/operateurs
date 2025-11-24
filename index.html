@@ -14,11 +14,10 @@
   body { font-family: Arial, sans-serif; background:#f4f6fa; margin:0; padding:20px; }
   h1 { margin:0; }
   .container {
-  width: 90%;
-  max-width: 1200px;
-  margin:auto;
-}
-
+    width: 90%;
+    max-width: 1200px;
+    margin:auto;
+  }
 
   input[type="file"] { margin:10px 0 15px; }
 
@@ -43,34 +42,47 @@
     }
   }
 
-/* Bouton moderne pour ouvrir le fichier */
-.file-button-wrapper {
-  margin: 15px 0;
-  position: relative;
-}
+  /* Boutons de fichier */
+  .file-button-wrapper {
+    margin: 15px 0;
+    position: relative;
+  }
 
-#excelFile {
-  display: none; /* on cache l'input natif */
-}
+  #excelFile, #excelLocation {
+    display: none; /* on cache l'input natif */
+  }
 
-#openFileBtn {
-  padding: 10px 20px;
-  background: #0078d4;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-  transition: 0.2s;
-}
+  .primary-btn, .secondary-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    transition: 0.2s;
+    display:inline-block;
+  }
+  .primary-btn {
+    background: #0078d4;
+    color: white;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  }
+  .primary-btn:hover {
+    background: #005fa3;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.25);
+  }
 
-#openFileBtn:hover {
-  background: #005fa3;
-  box-shadow: 0 5px 12px rgba(0,0,0,0.25);
-}
-
+  .secondary-btn {
+    background:#ffffff;
+    color:#0078d4;
+    border:1px solid #0078d4;
+    box-shadow:0 3px 8px rgba(0,0,0,0.05);
+    margin-left:10px;
+  }
+  .secondary-btn:hover {
+    background:#e8f3ff;
+    box-shadow:0 5px 12px rgba(0,0,0,0.15);
+  }
 
   /* Barre de chargement */
   #loadingBarWrapper {
@@ -139,7 +151,7 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   }
 
-  @media (max-width: 700px) {
+  @media (max-width: 900px) {
     .filters-row {
       flex-direction: column;
       align-items: stretch;
@@ -148,54 +160,81 @@
 
   /* KPI */
   .kpi-card {
-  background:white;
-  padding:22px 26px;
-  border-radius:14px;
-  box-shadow:0 3px 8px rgba(0,0,0,0.08);
-  margin-bottom:25px;
-  border-left:5px solid #0078d4;
-}
+    background:white;
+    padding:18px 22px;
+    border-radius:14px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom:25px;
+  }
 
-.kpi-section-title {
-  font-weight:600;
-  font-size:14px;
-  color:#005fa3;
-  text-transform:uppercase;
-  letter-spacing:0.4px;
-  margin-bottom:4px;
-}
+  .kpi-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 20px 0 30px;
+  }
 
-.kpi-row {
-  display:flex;
-  gap:30px;
-  flex-wrap:wrap;
-  font-size:14px;
-  padding-left:4px;
-}
+  .kpi-card {
+    flex: 1;
+    border-left: 5px solid #0078d4;
+    min-width: 260px;
+  }
 
-.kpi-row span b {
-  color:#222;
-}
+  .kpi-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: #005fa3;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
 
+  .kpi-line {
+    font-size: 15px;
+    margin: 6px 0;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .kpi-value {
+    font-weight: bold;
+    color: #222;
+  }
+
+  @media (max-width: 900px) {
+    .kpi-container {
+      flex-direction: column;
+    }
+  }
 
   /* Graph */
   #chartContainer {
-  background:white; padding:20px; border-radius:12px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:30px;
-  display:none; /* 👈 masqué par défaut */
-}
+    background:white; padding:20px; border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:30px;
+    display:none; /* masqué par défaut */
+  }
 
+  .chart-controls {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+    font-size:13px;
+  }
+
+  .chart-controls label {
+    font-weight:bold;
+  }
 
   /* Tableau */
   table {
-    width: 90%;              /* MODIFIÉ */
-    margin: auto;            /* AJOUTÉ */
+    width: 90%;
+    margin: auto;
     border-collapse: collapse;
     background: white;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
+  }
 
   th, td { padding:10px 12px; border-bottom:1px solid #eee; font-size:13px; }
   th { background:#fafafa; cursor:pointer; }
@@ -215,73 +254,45 @@
   .cert-org.expired { background:#fdecea; color:#c0392b; }
   .cert-org.none { background:#ecf0f1; color:#7f8c8d; }
 
-.kpi-card {
-  background:white;
-  padding:18px 22px;
-  border-radius:14px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1);
-  margin-bottom:25px;
-}
-
-.kpi-section-title {
-  font-weight:bold;
-  font-size:15px;
-  color:#005fa3;
-  margin-bottom:6px;
-}
-
-.kpi-row {
-  display:flex;
-  gap:25px;
-  flex-wrap:wrap;
-  font-size:14px;
-}
-
-/* --- KPI sur une seule ligne --- */
-.kpi-container {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  margin: 20px 0 30px;
-}
-
-.kpi-card {
-  flex: 1;
-  background: white;
-  padding: 20px 22px;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border-left: 5px solid #0078d4;
-  min-width: 280px;
-}
-
-.kpi-title {
-  font-weight: 700;
-  font-size: 15px;
-  color: #005fa3;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
-
-.kpi-line {
-  font-size: 15px;
-  margin: 6px 0;
-  display: flex;
-  justify-content: space-between;
-}
-
-.kpi-value {
-  font-weight: bold;
-  color: #222;
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .kpi-container {
-    flex-direction: column;
+  .hide-cert .cert-org {
+    display:none !important;
   }
-}
 
+  /* Colonnes géographiques : mode hybride (masquées par défaut) */
+  th.geo-col, td.geo-col {
+    display:none;
+  }
+  #dataTable.show-geo th.geo-col,
+  #dataTable.show-geo td.geo-col {
+    display:table-cell;
+  }
+
+  /* Zone actions tableau */
+  .table-actions {
+    width:90%;
+    margin: 10px auto 5px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+
+  .table-actions button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border:none;
+    cursor:pointer;
+    font-size: 13px;
+    font-weight:600;
+    background:#0078d4;
+    color:white;
+    box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    transition:0.2s;
+  }
+
+  .table-actions button:hover {
+    background:#005fa3;
+    box-shadow:0 4px 10px rgba(0,0,0,0.25);
+  }
 
   /* Modal export visuel */
   #exportModal {
@@ -305,41 +316,39 @@
     margin-right:8px;
   }
   #exportModal button {
-  padding: 6px 14px;
-  background: #0078d4;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  cursor: pointer;
-  font-size: 13px;
-  margin-left: 6px;
-}
+    padding: 6px 14px;
+    background: #0078d4;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+    margin-left: 6px;
+  }
+  #exportModal button:hover {
+    background:#005fa3;
+  }
 
-#exportModal button:hover {
-  background:#005fa3;
-}
-/* Recherche opérateur */
-#searchOperator {
-  padding: 7px 10px;
-  font-size: 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-bottom: 5px;
-}
+  /* Recherche opérateur */
+  #searchOperator {
+    padding: 7px 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 5px;
+  }
 
-#searchOperatorSelect {
-  padding: 7px 10px;
-  font-size: 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-#toggleChart {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-
-
+  #searchOperatorSelect {
+    padding: 7px 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  #toggleChart, #toggleGeoCols {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -352,14 +361,15 @@
   </div>
 
   <div class="file-button-wrapper">
-  <button id="openFileBtn">Ouvrir le fichier opérateurs</button>
-  <input type="file" id="excelFile" accept=".xlsx" />
-</div>
-
+    <button id="openFileBtn" class="primary-btn">Ouvrir le fichier opérateurs</button>
+    <input type="file" id="excelFile" accept=".xlsx" />
+    <button id="openLocationBtn" class="secondary-btn">Ouvrir le fichier géographique (optionnel)</button>
+    <input type="file" id="excelLocation" accept=".xlsx" />
+  </div>
 
   <!-- Filtres modernisés -->
- <div class="filters-card filters">
-  <div class="filters-row">
+  <div class="filters-card filters">
+    <div class="filters-row">
 
       <div class="filter-group">
         <label for="filterExpiry">Expiration</label>
@@ -379,7 +389,22 @@
         </select>
       </div>
 
-      <!-- 🔍 NOUVEAU : recherche opérateur -->
+      <!-- Filtres géographiques -->
+      <div class="filter-group">
+        <label for="filterPole">Pôle budgétaire</label>
+        <select id="filterPole">
+          <option value="ALL">Tous</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filterSection">Section budgétaire</label>
+        <select id="filterSection">
+          <option value="ALL">Toutes</option>
+        </select>
+      </div>
+
+      <!-- Recherche opérateur -->
       <div class="filter-group">
         <label for="searchOperator">Opérateur</label>
         <input type="text" id="searchOperator" placeholder="Nom ou prénom…" />
@@ -387,66 +412,72 @@
           <option value="ALL">Tous</option>
         </select>
       </div>
-      <!-- fin nouveau bloc -->
 
-      <div class="filter-group">
-        <label for="graphMode">Graphique</label>
-        <select id="graphMode">
-          <option value="domain">Domaines</option>
-          <option value="cert">Certificateurs</option>
-        </select>
+      <div class="filter-group" style="margin-top:22px;">
+        <label style="font-weight:normal; display:flex; align-items:center; gap:6px;">
+          <input type="checkbox" id="toggleChart" />
+          Afficher le graphique
+        </label>
       </div>
 
-<div class="filter-group" style="margin-top:22px;">
-  <label style="font-weight:normal; display:flex; align-items:center; gap:6px;">
-    <input type="checkbox" id="toggleChart" />
-    Afficher le graphique
-  </label>
-</div>
-
-
-      <div class="filter-group">
-        <label style="opacity:0;">.</label>
-        <button id="exportVisualBtn">Exporter visuel</button>
+      <div class="filter-group" style="margin-top:22px;">
+        <label style="font-weight:normal; display:flex; align-items:center; gap:6px;">
+          <input type="checkbox" id="toggleGeoCols" />
+          Colonnes géographiques
+        </label>
       </div>
 
+      <div class="filter-group" style="margin-top:22px;">
+        <label style="font-weight:normal; display:flex; align-items:center; gap:6px;">
+          <input type="checkbox" id="toggleCert" />
+          Afficher certificateurs
+        </label>
+      </div>
+
+    </div>
   </div>
-</div>
-
 
   <div id="loadingBarWrapper"><div id="loadingBar"></div></div>
 
   <!-- KPI -->
   <div class="kpi-container">
 
-  <!-- Bloc 1 : Opérateurs -->
-  <div class="kpi-card">
-    <div class="kpi-title">Opérateurs</div>
-    <div class="kpi-line">Globaux <span class="kpi-value" id="kpiTotal">–</span></div>
-    <div class="kpi-line">Filtrés <span class="kpi-value" id="kpiFilteredTotal">–</span></div>
+    <div class="kpi-card">
+      <div class="kpi-title">Opérateurs</div>
+      <div class="kpi-line">Globaux <span class="kpi-value" id="kpiTotal">–</span></div>
+      <div class="kpi-line">Filtrés <span class="kpi-value" id="kpiFilteredTotal">–</span></div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-title">Expirés</div>
+      <div class="kpi-line">Globaux <span class="kpi-value" id="kpiExpired">–</span></div>
+      <div class="kpi-line">Filtrés <span class="kpi-value" id="kpiFilteredExpired">–</span></div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-title">Socle complet</div>
+      <div class="kpi-line">Globaux <span class="kpi-value" id="kpiFull">–</span></div>
+      <div class="kpi-line">Filtrés <span class="kpi-value" id="kpiFilteredFull">–</span></div>
+    </div>
+
   </div>
-
-  <!-- Bloc 2 : Expirés -->
-  <div class="kpi-card">
-    <div class="kpi-title">Expirés</div>
-    <div class="kpi-line">Globaux <span class="kpi-value" id="kpiExpired">–</span></div>
-    <div class="kpi-line">Filtrés <span class="kpi-value" id="kpiFilteredExpired">–</span></div>
-  </div>
-
-  <!-- Bloc 3 : Socle complet -->
-  <div class="kpi-card">
-    <div class="kpi-title">Socle complet</div>
-    <div class="kpi-line">Globaux <span class="kpi-value" id="kpiFull">–</span></div>
-    <div class="kpi-line">Filtrés <span class="kpi-value" id="kpiFilteredFull">–</span></div>
-  </div>
-
-</div>
-
-
-
 
   <div id="chartContainer">
+    <div class="chart-controls">
+      <label for="graphMode">Vue graphique</label>
+      <select id="graphMode">
+        <option value="domain">Domaines</option>
+        <option value="cert">Certificateurs</option>
+        <option value="pole">Pôles</option>
+        <option value="section">Sections</option>
+      </select>
+    </div>
     <canvas id="chart"></canvas>
+  </div>
+
+  <div class="table-actions">
+    <button id="exportVisualBtn">Exporter le tableau</button>
+    <button id="exportEmailsBtn">Export des emails</button>
   </div>
 
   <table id="dataTable">
@@ -461,6 +492,9 @@
         <th data-domain="elec">Élec</th>
         <th data-domain="dpei">DPE Indiv</th>
         <th data-domain="audit">Audit</th>
+        <th class="geo-col">Pôle</th>
+        <th class="geo-col">Section</th>
+        <th class="geo-col">Manager</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -471,21 +505,16 @@
 <!-- MODAL EXPORT VISUEL -->
 <div id="exportModal">
   <div class="modal-inner">
-    
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
       <h2 style="margin:0;">Export des opérateurs filtrés</h2>
-
       <div>
         <button id="copyExportBtn">Copier</button>
         <button id="closeExportBtn">Fermer</button>
       </div>
     </div>
-
     <div id="exportTableContainer"></div>
-
   </div>
 </div>
-
 
 <script>
 /* ==========
@@ -522,6 +551,61 @@ function isValidDate(dateFin) {
   today.setHours(0,0,0,0);
   d.setHours(0,0,0,0);
   return d >= today;
+}
+
+/* ==========
+   Normalisation / clés de jointure
+   ========== */
+
+function normalizeString(str) {
+  if (!str) return "";
+
+  return str
+    .toString()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[-'_]+/g, " ")
+    .replace(/[^A-Za-z0-9 ]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toUpperCase();
+}
+
+// Clé depuis une ligne du fichier géographique : Nom (B) + Prénom (C)
+function getGeoKeyFromRow(row) {
+  const nom = row[1] || "";
+  const prenom = row[2] || "";
+  return normalizeString(nom + " " + prenom);
+}
+
+// Clé depuis un opérateur (en priorité colonnes C = NOM, D = Prénom)
+function getGeoKeyFromOperator(op) {
+  const r = op.row || [];
+  const nom = r[2] || "";
+  const prenom = r[3] || "";
+
+  const direct = normalizeString(nom + " " + prenom);     // NOM PRÉNOM
+  const reversed = normalizeString(prenom + " " + nom);   // PRÉNOM NOM
+
+  if (nom || prenom) {
+    if (LOCATION_MAP[direct]) return direct;
+    if (LOCATION_MAP[reversed]) return reversed;
+    return direct;
+  }
+
+  const parts = (op.name || "").split(" ").filter(x => x.trim() !== "");
+  if (parts.length >= 2) {
+    const last = parts[parts.length - 1];
+    const first = parts.slice(0, -1).join(" ");
+    const p_direct = normalizeString(last + " " + first);
+    const p_reversed = normalizeString(first + " " + last);
+
+    if (LOCATION_MAP[p_direct]) return p_direct;
+    if (LOCATION_MAP[p_reversed]) return p_reversed;
+
+    return p_direct;
+  }
+
+  return normalizeString(op.name || "");
 }
 
 /* ==========
@@ -565,8 +649,13 @@ const DOMAINS = [
    ========== */
 
 const fileInput = document.getElementById("excelFile");
+const locationFileInput = document.getElementById("excelLocation");
+
 const filterSelect = document.getElementById("filterExpiry");
 const filterCertSelect = document.getElementById("filterCert");
+const filterPoleSelect = document.getElementById("filterPole");
+const filterSectionSelect = document.getElementById("filterSection");
+
 const graphModeSelect = document.getElementById("graphMode");
 const loadingBarWrapper = document.getElementById("loadingBarWrapper");
 const loadingBar = document.getElementById("loadingBar");
@@ -576,24 +665,31 @@ const kpiExpired = document.getElementById("kpiExpired");
 const kpiFull = document.getElementById("kpiFull");
 const chartCanvas = document.getElementById("chart");
 const exportVisualBtn = document.getElementById("exportVisualBtn");
+const exportEmailsBtn = document.getElementById("exportEmailsBtn");
 const exportModal = document.getElementById("exportModal");
 const exportTableContainer = document.getElementById("exportTableContainer");
 const copyExportBtn = document.getElementById("copyExportBtn");
 const closeExportBtn = document.getElementById("closeExportBtn");
 const searchOperatorInput = document.getElementById("searchOperator");
 const searchOperatorSelect = document.getElementById("searchOperatorSelect");
-
+const toggleGeoColsCheckbox = document.getElementById("toggleGeoCols");
+const toggleCert = document.getElementById("toggleCert");
 
 let chartInstance = null;
-let ALL_OPERATORS = [];      // { name, domains:{ key:{status,org,num,deb,fin} } }
+let ALL_OPERATORS = [];      // { name, row, domains:{ key:{status,org,num,deb,fin} }, pole, section, manager, email }
 let currentStatsGlobal = null; // stats par domaine pour tout le fichier
+let LOCATION_MAP = {};       // key -> { email, section, pole, manager }
+let HAS_LOCATION = false;
 
 document.getElementById("openFileBtn").addEventListener("click", () => {
-  document.getElementById("excelFile").click();
+  fileInput.click();
+});
+document.getElementById("openLocationBtn").addEventListener("click", () => {
+  locationFileInput.click();
 });
 
 /* ==========
-   Chargement fichier
+   Chargement fichier opérateurs
    ========== */
 
 fileInput.addEventListener("change", e => {
@@ -614,6 +710,51 @@ fileInput.addEventListener("change", e => {
 });
 
 /* ==========
+   Chargement fichier géographique
+   ========== */
+
+locationFileInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = evt => {
+    const wb = XLSX.read(evt.target.result, {type:"binary", cellDates:true});
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
+    buildLocationMap(rows);
+    HAS_LOCATION = true;
+
+    if (ALL_OPERATORS.length) {
+      attachLocationToAllOperators();
+      populateLocationFilters(ALL_OPERATORS);
+      applyFilters();
+    }
+  };
+  reader.readAsBinaryString(file);
+});
+
+function buildLocationMap(rows) {
+  LOCATION_MAP = {};
+
+  rows.slice(1).forEach(row => {
+    const nom = row[1];
+    const prenom = row[2];
+    if (!nom && !prenom) return;
+
+    const email = row[3] || "";
+    const section = row[4] || "—";
+    const pole = row[5] || "—";
+    const managerNom = row[6] || "";
+    const managerPrenom = row[7] || "";
+    const manager = (managerNom + " " + managerPrenom).trim() || "—";
+
+    const key = getGeoKeyFromRow(row);
+    LOCATION_MAP[key] = { email, section, pole, manager };
+  });
+}
+
+/* ==========
    Barre de chargement
    ========== */
 
@@ -628,7 +769,7 @@ function hideLoading(){
 }
 
 /* ==========
-   Traitement des lignes et calcul des stats globales
+   Traitement des lignes opérateurs
    ========== */
 
 function processRows(rows){
@@ -642,14 +783,13 @@ function processRows(rows){
   const stats = {};
   DOMAINS.forEach(d => stats[d.label] = {valid:0, expired:0, none:0});
 
-  // Pour construire la liste des certificateurs
   const certSet = new Set();
 
   rows.slice(1).forEach(row => {
     const name = (row[COL.NAME] || "")
-    .toString()
-    .trim()
-    .replace(/\s+/g, " ");    // normalise espaces
+      .toString()
+      .trim()
+      .replace(/\s+/g, " ");
 
     if (!name) return;
 
@@ -661,7 +801,11 @@ function processRows(rows){
     const op = {
       name,
       row,
-      domains: {}
+      domains: {},
+      pole: "—",
+      section: "—",
+      manager: "—",
+      email: ""
     };
 
     DOMAINS.forEach(domain => {
@@ -717,23 +861,70 @@ function processRows(rows){
     ALL_OPERATORS.push(op);
   });
 
-  // KPI et stats globales
+  // KPI globaux
   kpiTotal.textContent = totalOps;
   kpiExpired.textContent = expiredOps;
   kpiFull.textContent = fullCoreOps;
 
-currentStatsGlobal = stats;
+  currentStatsGlobal = stats;
 
-populateCertFilter(certSet);
+  populateCertFilter(certSet);
+  populateOperatorSearch(ALL_OPERATORS);
 
-// 🟦 Correction : peupler la liste des opérateurs APRÈS tout le traitement
-populateOperatorSearch(ALL_OPERATORS);
-console.log("Operators loaded:", ALL_OPERATORS.length);
+  if (HAS_LOCATION) {
+    attachLocationToAllOperators();
+    populateLocationFilters(ALL_OPERATORS);
+  }
 
-drawChart();
-applyFilters();
-      // applique filtres (expiration + cert + opérateur) sur le tableau
+  drawChart();
+  applyFilters();
 }
+
+function attachLocationToAllOperators() {
+  ALL_OPERATORS.forEach(op => {
+    const key = getGeoKeyFromOperator(op);
+    const loc = LOCATION_MAP[key];
+
+    if (loc) {
+      op.email = loc.email || "";
+      op.section = loc.section || "—";
+      op.pole = loc.pole || "—";
+      op.manager = loc.manager || "—";
+    } else {
+      op.email = "";
+      op.section = "—";
+      op.pole = "—";
+      op.manager = "—";
+    }
+  });
+}
+
+function populateLocationFilters(ops) {
+  const poles = new Set();
+  const sections = new Set();
+
+  ops.forEach(op => {
+    if (op.pole && op.pole !== "—") poles.add(op.pole);
+    if (op.section && op.section !== "—") sections.add(op.section);
+  });
+
+  filterPoleSelect.innerHTML = '<option value="ALL">Tous</option>';
+  Array.from(poles).sort().forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p;
+    opt.textContent = p;
+    filterPoleSelect.appendChild(opt);
+  });
+
+  filterSectionSelect.innerHTML = '<option value="ALL">Toutes</option>';
+  Array.from(sections).sort().forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s;
+    opt.textContent = s;
+    filterSectionSelect.appendChild(opt);
+  });
+}
+
 function populateOperatorSearch(ops) {
   const select = searchOperatorSelect;
   select.innerHTML = '<option value="ALL">Tous</option>';
@@ -748,13 +939,11 @@ function populateOperatorSearch(ops) {
   });
 }
 
-
 /* ==========
    Construction du filtre certificateur
    ========== */
 
 function populateCertFilter(certSet){
-  // reset
   filterCertSelect.innerHTML = '<option value="ALL">Tous</option>';
 
   const certs = Array.from(certSet).sort((a,b)=>a.localeCompare(b));
@@ -767,7 +956,7 @@ function populateCertFilter(certSet){
 }
 
 /* ==========
-   Rendu du tableau à partir d'une liste d'opérateurs
+   Rendu du tableau
    ========== */
 
 function renderTable(operators){
@@ -809,10 +998,24 @@ Fin : ${dFin}`;
       tr.appendChild(td);
     });
 
+    const tdPole = document.createElement("td");
+    tdPole.className = "geo-col";
+    tdPole.textContent = op.pole || "—";
+    tr.appendChild(tdPole);
+
+    const tdSection = document.createElement("td");
+    tdSection.className = "geo-col";
+    tdSection.textContent = op.section || "—";
+    tr.appendChild(tdSection);
+
+    const tdManager = document.createElement("td");
+    tdManager.className = "geo-col";
+    tdManager.textContent = op.manager || "—";
+    tr.appendChild(tdManager);
+
     tbody.appendChild(tr);
   });
 
-  // Ajout du clic sur les certificateurs pour filtrer
   document.querySelectorAll(".cert-org").forEach(span => {
     const cert = span.getAttribute("data-cert");
     if (cert && cert !== "—") {
@@ -826,11 +1029,11 @@ Fin : ${dFin}`;
 }
 
 /* ==========
-   Stats par certificateur
+   Stats par certificateur / pôle / section
    ========== */
 
 function computeStatsByCertificateur(){
-  const stats = {};  // { "AFNOR": {valid,expired,none}, ... }
+  const stats = {};
 
   ALL_OPERATORS.forEach(op => {
     DOMAINS.forEach(domain => {
@@ -849,8 +1052,40 @@ function computeStatsByCertificateur(){
   return stats;
 }
 
+function computeStatsByPole(){
+  const stats = {};
+  ALL_OPERATORS.forEach(op => {
+    const pole = op.pole || "—";
+    if (!stats[pole]) {
+      stats[pole] = {valid:0, expired:0, none:0};
+    }
+    DOMAINS.forEach(domain => {
+      const d = op.domains[domain.key];
+      if (!d) return;
+      stats[pole][d.status]++;
+    });
+  });
+  return stats;
+}
+
+function computeStatsBySection(){
+  const stats = {};
+  ALL_OPERATORS.forEach(op => {
+    const section = op.section || "—";
+    if (!stats[section]) {
+      stats[section] = {valid:0, expired:0, none:0};
+    }
+    DOMAINS.forEach(domain => {
+      const d = op.domains[domain.key];
+      if (!d) return;
+      stats[section][d.status]++;
+    });
+  });
+  return stats;
+}
+
 /* ==========
-   Graph global : par domaine / par certificateur
+   Graph global : domaines / cert / pôle / section
    ========== */
 
 function drawChart(){
@@ -866,16 +1101,51 @@ function drawChart(){
   let noneData = [];
 
   if (mode === "domain") {
-    labels = DOMAINS.map(d => d.label);
-    validData   = labels.map(l => currentStatsGlobal[l].valid);
-    expiredData = labels.map(l => currentStatsGlobal[l].expired);
-    noneData    = labels.map(l => currentStatsGlobal[l].none);
+    DOMAINS.forEach(d => {
+      const s = currentStatsGlobal[d.label];
+      if (!s) return;
+      const total = s.valid + s.expired + s.none;
+      if (total === 0) return;
+      labels.push(d.label);
+      validData.push(s.valid);
+      expiredData.push(s.expired);
+      noneData.push(s.none);
+    });
   } else if (mode === "cert") {
     const certStats = computeStatsByCertificateur();
-    labels = Object.keys(certStats).sort((a,b)=>a.localeCompare(b));
-    validData   = labels.map(c => certStats[c].valid);
-    expiredData = labels.map(c => certStats[c].expired);
-    noneData    = labels.map(c => certStats[c].none);
+    Object.keys(certStats).sort((a,b)=>a.localeCompare(b)).forEach(c => {
+      const s = certStats[c];
+      const total = s.valid + s.expired + s.none;
+      if (total === 0) return;
+      labels.push(c);
+      validData.push(s.valid);
+      expiredData.push(s.expired);
+      noneData.push(s.none);
+    });
+  } else if (mode === "pole") {
+    const poleStats = computeStatsByPole();
+    Object.keys(poleStats).sort((a,b)=>a.localeCompare(b)).forEach(p => {
+      if (p === "—") return;
+      const s = poleStats[p];
+      const total = s.valid + s.expired + s.none;
+      if (total === 0) return;
+      labels.push(p);
+      validData.push(s.valid);
+      expiredData.push(s.expired);
+      noneData.push(s.none);
+    });
+  } else if (mode === "section") {
+    const sectionStats = computeStatsBySection();
+    Object.keys(sectionStats).sort((a,b)=>a.localeCompare(b)).forEach(sKey => {
+      if (sKey === "—") return;
+      const s = sectionStats[sKey];
+      const total = s.valid + s.expired + s.none;
+      if (total === 0) return;
+      labels.push(sKey);
+      validData.push(s.valid);
+      expiredData.push(s.expired);
+      noneData.push(s.none);
+    });
   }
 
   chartInstance = new Chart(chartCanvas.getContext("2d"), {
@@ -897,7 +1167,7 @@ function drawChart(){
 }
 
 /* ==========
-   Application combinée des filtres (expiration + certificateur)
+   Application combinée des filtres
    ========== */
 
 function applyFilters(){
@@ -906,15 +1176,15 @@ function applyFilters(){
   const months = parseInt(filterSelect.value, 10);
   const certVal = filterCertSelect.value;
   const searchText = searchOperatorInput.value.trim().toLowerCase();
+  const poleVal = filterPoleSelect.value;
+  const sectionVal = filterSectionSelect.value;
 
   let ops = ALL_OPERATORS.slice();
 
-  // 1) Filtre par nom d'opérateur (champ texte ou sélection)
   if (searchText !== "") {
     ops = ops.filter(op => op.name.toLowerCase().includes(searchText));
   }
 
-  // 2) Filtre expiration
   if (months > 0) {
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -930,33 +1200,37 @@ function applyFilters(){
     });
   }
 
-  // 3) Filtre certificateur
   if (certVal !== "ALL") {
     ops = ops.filter(op => {
       return Object.values(op.domains).some(d => d.org === certVal);
     });
   }
-// KPI filtrés
-document.getElementById("kpiFilteredTotal").textContent = ops.length;
 
-const expiredFiltered = ops.filter(op =>
-  Object.values(op.domains).some(d => d.status === "expired")
-).length;
+  if (poleVal !== "ALL") {
+    ops = ops.filter(op => op.pole === poleVal);
+  }
 
-document.getElementById("kpiFilteredExpired").textContent = expiredFiltered;
+  if (sectionVal !== "ALL") {
+    ops = ops.filter(op => op.section === sectionVal);
+  }
 
-const fullFiltered = ops.filter(op =>
-  DOMAINS.filter(d => d.isCore).every(d => op.domains[d.key].status === "valid")
-).length;
+  document.getElementById("kpiFilteredTotal").textContent = ops.length;
 
-document.getElementById("kpiFilteredFull").textContent = fullFiltered;
+  const expiredFiltered = ops.filter(op =>
+    Object.values(op.domains).some(d => d.status === "expired")
+  ).length;
+  document.getElementById("kpiFilteredExpired").textContent = expiredFiltered;
+
+  const fullFiltered = ops.filter(op =>
+    DOMAINS.filter(d => d.isCore).every(d => op.domains[d.key].status === "valid")
+  ).length;
+  document.getElementById("kpiFilteredFull").textContent = fullFiltered;
 
   renderTable(ops);
 }
 
-
 /* ==========
-   Export visuel (1 ligne par opérateur)
+   Export tableau
    ========== */
 
 function buildOperatorExportTable(operators){
@@ -973,6 +1247,9 @@ function buildOperatorExportTable(operators){
           <th>Élec</th>
           <th>DPE Indiv</th>
           <th>Audit</th>
+          <th>Pôle</th>
+          <th>Section</th>
+          <th>Manager</th>
         </tr>
       </thead>
       <tbody>
@@ -1001,26 +1278,34 @@ function buildOperatorExportTable(operators){
         </td>`;
     });
 
-    html += `</tr>`;
+    html += `
+      <td>${op.pole || "—"}</td>
+      <td>${op.section || "—"}</td>
+      <td>${op.manager || "—"}</td>
+    </tr>`;
   });
 
   html += `</tbody></table>`;
   return html;
 }
 
-function openExportVisual(){
+function getOperatorsFromCurrentTable(){
   const rows = Array.from(document.querySelectorAll("#dataTable tbody tr"));
-  if (rows.length === 0){
-    alert("Aucune donnée à exporter.");
-    return;
-  }
-
   const ops = [];
   rows.forEach(tr => {
     const name = tr.children[0].innerText.trim();
     const op = ALL_OPERATORS.find(o => o.name === name);
     if (op) ops.push(op);
   });
+  return ops;
+}
+
+function openExportVisual(){
+  const ops = getOperatorsFromCurrentTable();
+  if (!ops.length){
+    alert("Aucune donnée à exporter.");
+    return;
+  }
 
   const tableHTML = buildOperatorExportTable(ops);
   exportTableContainer.innerHTML = tableHTML;
@@ -1031,8 +1316,8 @@ function openExportVisual(){
 function copyExportTable(){
   const htmlTable = exportTableContainer.innerHTML;
 
-  if (!navigator.clipboard) {
-    alert("Votre navigateur ne supporte pas la copie HTML.");
+  if (!navigator.clipboard || !window.ClipboardItem) {
+    alert("Votre navigateur ne supporte pas la copie HTML avec mise en forme. Vous pouvez sélectionner le tableau et le copier manuellement.");
     return;
   }
 
@@ -1044,7 +1329,7 @@ function copyExportTable(){
     })
   ])
   .then(() => {
-    alert("Tableau copié avec mise en forme ! Vous pouvez coller dans Excel pour exploiter les données.");
+    alert("Tableau copié avec mise en forme ! Vous pouvez coller dans Excel ou Outlook.");
   })
   .catch(err => {
     alert("Erreur de copie. Sélectionnez et copiez manuellement.");
@@ -1052,6 +1337,56 @@ function copyExportTable(){
   });
 }
 
+/* ==========
+   Export des emails
+   ========== */
+
+function exportEmails(){
+  const ops = getOperatorsFromCurrentTable();
+  if (!ops.length){
+    alert("Aucune donnée à exporter.");
+    return;
+  }
+
+  const emails = Array.from(new Set(
+    ops
+      .map(o => (o.email || "").trim())
+      .filter(e => e !== "")
+  ));
+
+  if (!emails.length){
+    alert("Aucun email disponible pour les opérateurs filtrés.");
+    return;
+  }
+
+  const emailList = emails.join("; ");
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(emailList)
+      .then(() => {
+        alert("Liste d'emails copiée dans le presse-papiers :\n\n" + emailList);
+      })
+      .catch(() => {
+        alert("Impossible de copier automatiquement. Voici la liste :\n\n" + emailList);
+      });
+  } else {
+    alert("Voici la liste d'emails :\n\n" + emailList);
+  }
+}
+
+/* ==========
+   Toggle affichage des certificateurs
+   ========== */
+
+document.body.classList.add("hide-cert");
+
+toggleCert.addEventListener("change", () => {
+  if (toggleCert.checked) {
+    document.body.classList.remove("hide-cert");
+  } else {
+    document.body.classList.add("hide-cert");
+  }
+});
 
 /* ==========
    Écouteurs filtres & mode graphique & export
@@ -1059,38 +1394,45 @@ function copyExportTable(){
 
 filterSelect.addEventListener("change", applyFilters);
 filterCertSelect.addEventListener("change", applyFilters);
+filterPoleSelect.addEventListener("change", applyFilters);
+filterSectionSelect.addEventListener("change", applyFilters);
 
 graphModeSelect.addEventListener("change", () => {
   if (!currentStatsGlobal) return;
   drawChart();
 });
 
-// Affichage / masquage du graphique
 document.getElementById("toggleChart").addEventListener("change", (e) => {
   const chartContainer = document.getElementById("chartContainer");
-
   if (e.target.checked) {
     chartContainer.style.display = "block";
-    if (currentStatsGlobal) drawChart(); // redessine au besoin
+    if (currentStatsGlobal) drawChart();
   } else {
     chartContainer.style.display = "none";
   }
 });
 
+toggleGeoColsCheckbox.addEventListener("change", (e) => {
+  const table = document.getElementById("dataTable");
+  if (e.target.checked) {
+    table.classList.add("show-geo");
+  } else {
+    table.classList.remove("show-geo");
+  }
+});
 
 exportVisualBtn.addEventListener("click", openExportVisual);
 copyExportBtn.addEventListener("click", copyExportTable);
 closeExportBtn.addEventListener("click", () => {
   exportModal.style.display = "none";
 });
-// Recherche opérateur (saisie texte)
+exportEmailsBtn.addEventListener("click", exportEmails);
+
 searchOperatorInput.addEventListener("input", (e) => {
-  // quand on tape à la main, on remet le select sur "Tous"
   searchOperatorSelect.value = "ALL";
   applyFilters();
 });
 
-// Recherche opérateur (sélecteur)
 searchOperatorSelect.addEventListener("change", (e) => {
   const val = e.target.value;
   if (val === "ALL") {
@@ -1111,7 +1453,7 @@ function sortByDomain(domainKey){
   const domainIndex = DOMAINS.findIndex(d => d.key === domainKey);
   if (domainIndex < 0) return;
 
-  const tdIndex = domainIndex + 1; // +1 car col 0 = nom
+  const tdIndex = domainIndex + 1;
 
   const rows = Array.from(tbody.querySelectorAll("tr"));
 
@@ -1140,6 +1482,36 @@ document.querySelectorAll("th[data-domain]").forEach(th => {
     const key = th.getAttribute("data-domain");
     sortByDomain(key);
   });
+});
+
+/* ==========
+   Tri par colonnes géographiques
+   ========== */
+
+function sortByGeoHeader(th){
+  const thIndex = Array.from(th.parentNode.children).indexOf(th);
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+  const asc = th.dataset.sortAsc === "true" ? false : true;
+  th.dataset.sortAsc = asc ? "true" : "false";
+
+  rows.sort((a,b) => {
+    const aVal = a.children[thIndex].innerText.toLowerCase();
+    const bVal = b.children[thIndex].innerText.toLowerCase();
+
+    if (aVal < bVal) return asc ? -1 : 1;
+    if (aVal > bVal) return asc ? 1 : -1;
+
+    const nameA = a.children[0].innerText.toLowerCase();
+    const nameB = b.children[0].innerText.toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
+  tbody.innerHTML = "";
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+document.querySelectorAll("#dataTable thead th.geo-col").forEach(th => {
+  th.addEventListener("click", () => sortByGeoHeader(th));
 });
 </script>
 
