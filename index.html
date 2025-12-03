@@ -140,6 +140,28 @@
     flex-direction: column;
     font-size: 13px;
   }
+  .filter-group-operator {
+    flex: 1 1 100%;
+  }
+  .operator-row {
+    display:flex;
+    gap:16px;
+    align-items:flex-end;
+    flex-wrap:wrap;
+  }
+  .operator-main {
+    display:flex;
+    flex-direction:column;
+    max-width: 280px;
+    flex: 0 0 280px;
+  }
+  .operator-options {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 16px;
+    font-size:12px;
+  }
+
 
   .filter-group label {
     font-weight: bold;
@@ -454,6 +476,241 @@ table {
     height: 16px;
     cursor: pointer;
   }
+
+  /* ===== Vue avancée / Vue mémoires ===== */
+  .view-toggle {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0 0;
+    font-size: 13px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .view-toggle span {
+    font-weight: 600;
+    color: #333;
+  }
+  .view-toggle label {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #e8f3ff;
+    border: 1px solid #c5dcff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .view-toggle input[type="radio"] {
+    accent-color: #0078d4;
+  }
+
+
+  /* Vue mémoires : cartes par domaine avec liste des opérateurs certifiés */
+  .memoire-panels {
+    margin: 15px 20px 0;
+    display: none;
+    gap: 16px;
+  }
+  body.memoire-mode .memoire-panels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .memoire-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #dde7f5;
+    padding: 12px 14px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    font-size: 12px;
+  }
+  .memoire-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .memoire-card-title {
+    font-weight: 700;
+    color: #005fa3;
+    text-transform: uppercase;
+    font-size: 11px;
+  }
+  .memoire-card-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: #e8f8f0;
+    color: #1e8449;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .memoire-names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .memoire-name-chip {
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: #f4f6fb;
+    border: 1px solid #dde2f0;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .memoire-names-empty {
+    font-style: italic;
+    color: #999;
+    font-size: 11px;
+  }
+
+  /* Mode mémoires : tableau plus "premium" pour intégration aux appels d'offres */
+  .domain-toggle-label {
+    display:block;
+    margin-top:6px;
+    font-weight:600;
+    font-size:12px;
+    color:#333;
+  }
+  .domain-toggle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 12px;
+    align-items: center;
+  }
+  .domain-toggle label {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid #c5dcff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .domain-toggle input[type="checkbox"] {
+    accent-color: #0078d4;
+  }
+
+  .filter-subrow {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:4px;
+  }
+  .filter-toggle {
+    font-weight:normal;
+    display:flex;
+    align-items:center;
+    gap:4px;
+    font-size:12px;
+  }
+
+
+  .table-container {
+    margin-top: 12px;
+  }
+
+  .layout-toggle {
+    display:none;
+    align-items:center;
+    gap:8px;
+    margin: 0 0 6px 0;
+    font-size: 12px;
+  }
+  .layout-toggle span {
+    font-weight:600;
+    color:#333;
+  }
+  .layout-toggle button {
+    border-radius:999px;
+    border:1px solid #c5dcff;
+    background:#ffffff;
+    padding:4px 10px;
+    cursor:pointer;
+    font-size:12px;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+  }
+  .layout-toggle button.active {
+    background:#0078d4;
+    color:#ffffff;
+    border-color:#0078d4;
+  }
+  body.memoire-mode .layout-toggle {
+    display:flex;
+  }
+
+  .bubble-container {
+    display:none;
+    margin: 8px 20px 0 0;
+    padding: 8px;
+    background:#ffffff;
+    border-radius: 12px;
+    border:1px solid #dde7f5;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  }
+  #bubbleChart {
+    width:100%;
+    max-height:320px;
+  }
+
+  /* Visibilité selon le mode d'affichage en visu mémoires */
+  body.memoire-mode.layout-list .table-wrapper {
+    display:block;
+  }
+  body.memoire-mode.layout-list #memoirePanels {
+    display:none;
+  }
+  body.memoire-mode.layout-list #bubbleContainer {
+    display:none;
+  }
+
+  body.memoire-mode.layout-cards .table-wrapper {
+    display:none;
+  }
+  body.memoire-mode.layout-cards #memoirePanels {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  body.memoire-mode.layout-cards #bubbleContainer {
+    display:none;
+  }
+
+  body.memoire-mode.layout-bubbles .table-wrapper {
+    display:none;
+  }
+  body.memoire-mode.layout-bubbles #memoirePanels {
+    display:none;
+  }
+  body.memoire-mode.layout-bubbles #bubbleContainer {
+    display:block;
+  }
+
+
+  body.memoire-mode .table-wrapper {
+    border: 2px solid #0078d4;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  }
+  body.memoire-mode #dataTable tbody tr:nth-child(even){
+    background:#f7faff;
+  }
+  body.memoire-mode #dataTable tbody tr:hover{
+    background:#eef4ff;
+  }
+  /* Toutes les pastilles en cours de validité en vert dans la vue mémoires */
+  body.memoire-mode .dot.valid,
+  body.memoire-mode .dot.near6,
+  body.memoire-mode .dot.near12{
+    background:#2ecc71 !important;
+  }
+
 </style>
 </head>
 <body>
@@ -473,7 +730,21 @@ table {
   </div>
 
   <!-- Filtres modernisés -->
+  
+  <div class="view-toggle">
+    <span>Mode d’affichage :</span>
+    <label>
+      <input type="radio" name="viewMode" value="advanced" checked>
+      Visu avancée
+    </label>
+    <label>
+      <input type="radio" name="viewMode" value="memoire">
+      Visu mémoires
+    </label>
+  </div>
+
   <div class="filters-card filters">
+
     <div class="filters-row">
 
       <div class="filter-group">
@@ -509,35 +780,45 @@ table {
         </select>
       </div>
 
-      <!-- Recherche opérateur -->
-      <div class="filter-group">
-        <label for="searchOperator">Opérateur</label>
-        <input type="text" id="searchOperator" placeholder="Nom ou prénom…" />
-        <select id="searchOperatorSelect">
-          <option value="ALL">Tous</option>
-        </select>
+      <!-- Recherche opérateur + options d'affichage -->
+      <div class="filter-group filter-group-operator">
+        <div class="operator-row">
+          <div class="operator-main">
+            <label for="searchOperator">Opérateur</label>
+            <input type="text" id="searchOperator" placeholder="Nom ou prénom…" />
+            <select id="searchOperatorSelect">
+              <option value="ALL">Tous</option>
+            </select>
+          </div>
+          <div class="operator-options">
+            <label class="filter-toggle">
+              <input type="checkbox" id="toggleChart" />
+              Afficher le graphique
+            </label>
+            <label class="filter-toggle">
+              <input type="checkbox" id="toggleGeoCols" />
+              Colonnes géographiques
+            </label>
+            <label class="filter-toggle">
+              <input type="checkbox" id="toggleCert" />
+              Afficher les certificateurs
+            </label>
+          </div>
+        </div>
+
+        <label class="domain-toggle-label">Domaines affichés</label>
+        <div class="domain-toggle">
+          <label><input type="checkbox" value="amiante" checked> Amiante</label>
+          <label><input type="checkbox" value="crep" checked> CREP</label>
+          <label><input type="checkbox" value="term" checked> Termites</label>
+          <label><input type="checkbox" value="dpem" checked> DPE Mention</label>
+          <label><input type="checkbox" value="gaz" checked> Gaz</label>
+          <label><input type="checkbox" value="elec" checked> Élec</label>
+          <label><input type="checkbox" value="dpei" checked> DPE Indiv</label>
+          <label><input type="checkbox" value="audit" checked> Audit</label>
+        </div>
       </div>
 
-      <div class="filter-group" style="margin-top:22px;">
-        <label style="font-weight:normal; display:flex; align-items:center; gap:6px;">
-          <input type="checkbox" id="toggleChart" />
-          Afficher le graphique
-        </label>
-      </div>
-
-      <div class="filter-group" style="margin-top:22px;">
-        <label style="font-weight:normal; display:flex; align-items:center; gap:6px;">
-          <input type="checkbox" id="toggleGeoCols" />
-          Colonnes géographiques
-        </label>
-      </div>
-
-      <div class="filter-group" style="margin-top:22px;">
-        <label style="font-weight:normal; display:flex; align-items:center; gap:6px;">
-          <input type="checkbox" id="toggleCert" />
-          Afficher certificateurs
-        </label>
-      </div>
 
     </div>
   </div>
@@ -594,7 +875,21 @@ table {
 </div>
 
 </div>
-<div class="table-wrapper">
+
+<div class="table-container">
+  <div class="layout-toggle">
+    <span>Affichage :</span>
+    <button type="button" id="layoutListBtn" class="active">Liste</button>
+    <button type="button" id="layoutCardsBtn">Cartes</button>
+    <button type="button" id="layoutBubblesBtn">à venir</button>
+  </div>
+
+  <div id="memoirePanels" class="memoire-panels"></div>
+
+  <div id="bubbleContainer" class="bubble-container"><canvas id="bubbleChart"></canvas></div>
+
+  <div class="table-wrapper">
+
   <table id="dataTable">
 
     <thead>
@@ -830,7 +1125,236 @@ const toggleGeoColsCheckbox = document.getElementById("toggleGeoCols");
 const exportEmailsBtn = document.getElementById("exportEmailsBtn");
 const toggleCert = document.getElementById("toggleCert");
 
+
+const domainCheckboxes = document.querySelectorAll('.domain-toggle input[type="checkbox"]');
+
+function updateDomainVisibility() {
+  const table = document.getElementById("dataTable");
+  if (!table) return;
+  const headRow = table.tHead ? table.tHead.rows[0] : null;
+  if (!headRow) return;
+
+  const visibleMap = {};
+  domainCheckboxes.forEach(cb => {
+    visibleMap[cb.value] = cb.checked;
+  });
+
+  const ths = headRow.cells;
+
+  DOMAINS.forEach((domain, idx) => {
+    const colIndex = 1 + idx; // 0 = opérateur, ensuite domaines
+    const visible = visibleMap[domain.key] !== false;
+    const displayValue = visible ? "" : "none";
+
+    if (ths[colIndex]) ths[colIndex].style.display = displayValue;
+
+    Array.from(table.tBodies[0].rows).forEach(row => {
+      if (row.cells[colIndex]) row.cells[colIndex].style.display = displayValue;
+    });
+  });
+}
+
+domainCheckboxes.forEach(cb => {
+  cb.addEventListener("change", () => {
+    updateDomainVisibility();
+    applyFilters();
+  });
+});
+
+
+function renderMemoirePanels(ops) {
+  const container = document.getElementById("memoirePanels");
+  if (!container) return;
+
+  const isMemoire = (typeof VIEW_MODE !== "undefined" && VIEW_MODE === "memoire");
+  if (!isMemoire) {
+    container.innerHTML = "";
+    return;
+  }
+
+  // Carte par domaine, seulement si au moins un opérateur avec certif valide
+  const domainVisibleMap = {};
+  if (typeof domainCheckboxes !== "undefined") {
+    domainCheckboxes.forEach(cb => {
+      domainVisibleMap[cb.value] = cb.checked;
+    });
+  }
+
+  let htmlPanels = "";
+
+  DOMAINS.forEach(domain => {
+    // Respecter les domaines masqués
+    if (domainVisibleMap[domain.key] === false) return;
+
+    const names = [];
+
+    ops.forEach(op => {
+      const d = op.domains[domain.key];
+      if (!d) return;
+      // En mémoires : on ne retient que les certifs valides (y compris proches)
+      if (d.status === "valid") {
+        names.push(op.name);
+      }
+    });
+
+    if (names.length === 0) return;
+
+    const uniqueNames = Array.from(new Set(names)).sort((a,b) => a.localeCompare(b));
+
+    htmlPanels += '<div class="memoire-card">';
+    htmlPanels +=   '<div class="memoire-card-header">';
+    htmlPanels +=     '<div class="memoire-card-title">' + domain.label + '</div>';
+    htmlPanels +=     '<div class="memoire-card-badge">' + uniqueNames.length + ' certifiés</div>';
+    htmlPanels +=   '</div>';
+
+    if (uniqueNames.length) {
+      htmlPanels += '<div class="memoire-names">';
+      uniqueNames.forEach(name => {
+        htmlPanels += '<span class="memoire-name-chip">' + name + '</span>';
+      });
+      htmlPanels += '</div>';
+    } else {
+      htmlPanels += '<div class="memoire-names-empty">Aucun opérateur certifié</div>';
+    }
+
+    htmlPanels += '</div>';
+  });
+
+  container.innerHTML = htmlPanels;
+}
+
+function renderBubbleChart(ops) {
+  const container = document.getElementById("bubbleContainer");
+  const canvas = document.getElementById("bubbleChart");
+  if (!container || !canvas) return;
+
+  const isMemoire = (typeof VIEW_MODE !== "undefined" && VIEW_MODE === "memoire");
+  if (!isMemoire) {
+    container.style.display = "none";
+    return;
+  }
+
+  const ctx = canvas.getContext("2d");
+
+  const visibleMap = {};
+  if (typeof domainCheckboxes !== "undefined") {
+    domainCheckboxes.forEach(cb => {
+      visibleMap[cb.value] = cb.checked;
+    });
+  }
+
+  const counts = [];
+  DOMAINS.forEach((domain, idx) => {
+    if (visibleMap[domain.key] === false) return;
+
+    let count = 0;
+    ops.forEach(op => {
+      const d = op.domains[domain.key];
+      if (!d) return;
+      if (d.status === "valid") {
+        count++;
+      }
+    });
+    counts.push({ domain, count });
+  });
+
+  const maxCount = counts.reduce((m, c) => Math.max(m, c.count), 0) || 1;
+
+  const datasets = counts.map((item, i) => {
+    const radius = 10 + (item.count / maxCount) * 25; // rayon entre 10 et 35
+    const x = (i + 1) * (100 / (counts.length + 1));
+    const y = 50;
+
+    // Couleurs différentes par domaine
+    const palette = [
+      "#2ecc71", // green
+      "#3498db", // blue
+      "#9b59b6", // purple
+      "#e67e22", // orange
+      "#e74c3c", // red
+      "#16a085", // teal
+      "#f1c40f", // yellow
+      "#34495e"  // dark
+    ];
+    const color = palette[i % palette.length];
+
+    return {
+      label: item.domain.label + " (" + item.count + ")",
+      data: [{ x, y, r: radius }],
+      backgroundColor: color
+    };
+  });
+
+  if (bubbleChartInstance) {
+    bubbleChartInstance.destroy();
+  }
+
+  bubbleChartInstance = new Chart(ctx, {
+    type: "bubble",
+    data: {
+      datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            boxWidth: 12,
+            padding: 10
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) => context.dataset.label
+          }
+        }
+      },
+      scales: {
+        x: {
+          display: false,
+          min: 0,
+          max: 100
+        },
+        y: {
+          display: false,
+          min: 0,
+          max: 100
+        }
+      }
+    }
+  });
+}
+const viewModeRadios = document.querySelectorAll('input[name="viewMode"]');
+viewModeRadios.forEach(radio => {
+  radio.addEventListener("change", (e) => {
+    VIEW_MODE = e.target.value;
+    if (VIEW_MODE === "memoire") {
+      document.body.classList.add("memoire-mode");
+      document.body.classList.add("layout-list");
+      document.body.classList.remove("layout-cards");
+      document.body.classList.remove("layout-bubbles");
+      const listBtn = document.getElementById("layoutListBtn");
+      const cardsBtn = document.getElementById("layoutCardsBtn");
+      if (listBtn && cardsBtn) {
+        listBtn.classList.add("active");
+        cardsBtn.classList.remove("active");
+      }
+    } else {
+      document.body.classList.remove("memoire-mode");
+      document.body.classList.remove("layout-list");
+      document.body.classList.remove("layout-cards");
+      document.body.classList.remove("layout-bubbles");
+    }
+    applyFilters();
+  });
+});
+
+
 let chartInstance = null;
+let bubbleChartInstance = null;
+let VIEW_MODE = "advanced";
 let ALL_OPERATORS = [];      // { name, row, domains:{ key:{status,org,num,deb,fin} }, pole, section, manager, email }
 let currentStatsGlobal = null; // stats par domaine pour tout le fichier
 let LOCATION_MAP = {};       // key -> { email, section, pole, manager }
@@ -1013,6 +1537,7 @@ function processRows(rows){
     if (opExpired) expiredOps++;
     if (opFullCore) fullCoreOps++;
 
+    op.isFullCore = opFullCore;
     ALL_OPERATORS.push(op);
   });
 
@@ -1159,6 +1684,14 @@ function renderTable(operators){
       }
 
       const td = document.createElement("td");
+      const isMemoire = (typeof VIEW_MODE !== "undefined" && VIEW_MODE === "memoire");
+
+      if (isMemoire && (d.status === "expired" || d.status === "none")) {
+        td.textContent = "—";
+        tr.appendChild(td);
+        return;
+      }
+
       const safeOrg = d.org === "" ? "—" : d.org;
       const safeTooltip = tooltip.replace(/"/g, '&quot;');
 
@@ -1321,6 +1854,7 @@ function drawChart(){
    Pastilles en tête de colonnes (valid / expiré / 6 / 12 mois)
    ========== */
 
+
 function updateHeaderBadges(ops) {
   const counters = {};
   DOMAINS.forEach(d => {
@@ -1364,26 +1898,34 @@ function updateHeaderBadges(ops) {
     });
   });
 
-// Remplissage HTML des pastilles
-DOMAINS.forEach(domain => {
-  const slot = document.getElementById("H_" + domain.key);
-  const c = counters[domain.key];
+  DOMAINS.forEach(domain => {
+    const slot = document.getElementById("H_" + domain.key);
+    const c = counters[domain.key];
+    const isMemoire = (typeof VIEW_MODE !== "undefined" && VIEW_MODE === "memoire");
+    let html = "";
 
-  let html = "";
+    if (isMemoire) {
+      // En mode mémoires : une seule pastille verte = toutes les certifs valides (y compris proches)
+      const totalValid = c.valid + c.six + c.twelve;
+      if (totalValid > 0) {
+        html += '<span class="h-badge h-green" title="Certifications valides">' + totalValid + '</span>';
+      }
+    } else {
+      // Mode avancé : on garde le détail (vert / rouge / violet / orange)
+      if (c.valid > 0)
+        html += '<span class="h-badge h-green" title="Valides">' + c.valid + '</span>';
+      if (c.expired > 0)
+        html += '<span class="h-badge h-red" title="Expirées">' + c.expired + '</span>';
+      if (c.six > 0)
+        html += '<span class="h-badge h-purple" title="≤ 6 mois">' + c.six + '</span>';
+      if (c.twelve > 0)
+        html += '<span class="h-badge h-orange" title="≤ 12 mois">' + c.twelve + '</span>';
+    }
 
-  if (c.valid > 0)
-    html += `<span class="h-badge h-green" title="Valides">${c.valid}</span>`;
-  if (c.expired > 0)
-    html += `<span class="h-badge h-red" title="Expirées">${c.expired}</span>`;
-  if (c.six > 0)
-  html += `<span class="h-badge h-purple">${c.six}</span>`;
-if (c.twelve > 0)
-  html += `<span class="h-badge h-orange">${c.twelve}</span>`;
-
-
-  slot.innerHTML = html;
-});
+    slot.innerHTML = html;
+  });
 }
+
 
 /* ==========
    Application combinée des filtres
@@ -1400,11 +1942,13 @@ function applyFilters(){
 
   let ops = ALL_OPERATORS.slice();
 
+  const isMemoire = (VIEW_MODE === "memoire");
+
   if (searchText !== "") {
     ops = ops.filter(op => op.name.toLowerCase().includes(searchText));
   }
 
-  if (months > 0) {
+  if (!isMemoire && months > 0) {
     const today = new Date();
     today.setHours(0,0,0,0);
     const target = new Date(today.getTime());
@@ -1447,6 +1991,9 @@ function applyFilters(){
 
   renderTable(ops);
   updateHeaderBadges(ops);
+  updateDomainVisibility();
+  renderMemoirePanels(ops);
+  renderBubbleChart(ops);
 }
 
 /* ==========
@@ -1729,6 +2276,40 @@ document.querySelectorAll("#dataTable thead th.geo-col")
   });
 
 });
+
+const layoutListBtn = document.getElementById("layoutListBtn");
+const layoutCardsBtn = document.getElementById("layoutCardsBtn");
+const layoutBubblesBtn = document.getElementById("layoutBubblesBtn");
+
+if (layoutListBtn && layoutCardsBtn && layoutBubblesBtn) {
+  layoutListBtn.addEventListener("click", () => {
+    document.body.classList.add("layout-list");
+    document.body.classList.remove("layout-cards");
+    document.body.classList.remove("layout-bubbles");
+    layoutListBtn.classList.add("active");
+    layoutCardsBtn.classList.remove("active");
+    layoutBubblesBtn.classList.remove("active");
+  });
+
+  layoutCardsBtn.addEventListener("click", () => {
+    document.body.classList.remove("layout-list");
+    document.body.classList.add("layout-cards");
+    document.body.classList.remove("layout-bubbles");
+    layoutCardsBtn.classList.add("active");
+    layoutListBtn.classList.remove("active");
+    layoutBubblesBtn.classList.remove("active");
+  });
+
+  layoutBubblesBtn.addEventListener("click", () => {
+    document.body.classList.remove("layout-list");
+    document.body.classList.remove("layout-cards");
+    document.body.classList.add("layout-bubbles");
+    layoutBubblesBtn.classList.add("active");
+    layoutListBtn.classList.remove("active");
+    layoutCardsBtn.classList.remove("active");
+  });
+}
+
 </script>
 
 </body>
